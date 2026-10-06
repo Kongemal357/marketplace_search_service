@@ -2,5 +2,8 @@
 
 set -e
 
-uv run alembic upgrade head
-uv run python -m bin.api
+uv run python -m bin.consumer &
+CONSUMER_PID=$!
+trap "kill $CONSUMER_PID 2>/dev/null || true" EXIT
+
+exec uv run python -m bin.api
